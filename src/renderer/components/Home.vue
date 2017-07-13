@@ -6,5 +6,8 @@
 <script>
 </script>
 
-<style>
+<style lang='scss'>
+  span {
+    color: red;
+  }
 </style>
