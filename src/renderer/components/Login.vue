@@ -11,8 +11,8 @@
 </template>
 
 <script>
+  import client from '../lib/github_client'
   import config from '../lib/config'
-  import axios from 'axios'
 
   export default {
     data () {
@@ -25,7 +25,7 @@
     },
     methods: {
       test () {
-        axios.get(this.apiUrl, {headers: {'Authorization': `token ${this.token}`}})
+        client.check(this.apiUrl, this.token)
           .then(function (response) {
             if (response.status === 200) {
               config.set(config.keys.apiUrl, this.apiUrl)
