@@ -4,6 +4,7 @@ const store = new Store()
 export default {
   keys: {
     apiUrl: 'api_url',
+    webUrl: 'web_url',
     token: 'token'
   },
   set (key, value) {

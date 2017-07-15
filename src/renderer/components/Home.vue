@@ -2,6 +2,8 @@
   div#wrapper
     span api url
     input(v-model="apiUrl")
+    span web url
+    input(v-model="webUrl")
     span token
     input(v-model="token")
     p(@click="test") test
@@ -16,13 +18,10 @@
     data () {
       return {
         apiUrl: '',
+        webUrl: '',
         token: '',
         message: ''
       }
-    },
-    mounted () {
-      console.log(config.get(config.keys.apiUrl))
-      console.log(config.get(config.keys.token))
     },
     methods: {
       test () {
@@ -30,8 +29,12 @@
           .then(function (response) {
             if (response.status === 200) {
               config.set(config.keys.apiUrl, this.apiUrl)
+              config.set(config.keys.webUrl, this.webUrl)
               config.set(config.keys.token, this.token)
               this.message = 'correct!'
+              setTimeout(() => {
+                console.log('次のページへ')
+              }, 1100)
             }
           }.bind(this))
           .catch(function () {
@@ -43,7 +46,4 @@
 </script>
 
 <style lang='scss'>
-  span {
-    color: red;
-  }
 </style>
