@@ -32,8 +32,10 @@
               config.set(config.keys.webUrl, this.webUrl)
               config.set(config.keys.token, this.token)
               this.message = 'correct!'
+
+              var self = this
               setTimeout(() => {
-                console.log('次のページへ')
+                self.$router.push('main')
               }, 1100)
             }
           }.bind(this))
