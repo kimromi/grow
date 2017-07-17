@@ -9,8 +9,8 @@
 
   export default {
     async created () {
-      if (db.get(db.keys.orgs) === undefined) {
-        await this.fetchOrganizations()
+      if (db.get(db.keys.orgs) === undefined || db.get(db.keys.orgs) === null) {
+        this.$router.push('organizations')
       }
       if (db.get(db.keys.repos) === undefined) {
         await this.fetchRepositories()
@@ -23,16 +23,6 @@
       //   })
     },
     methods: {
-      async fetchOrganizations () {
-        let orgs = []
-        for (let org of await client.organizations()) {
-          orgs.push({
-            name: org.login,
-            managed: false
-          })
-        }
-        db.set(db.keys.orgs, orgs)
-      },
       async fetchRepositories () {
         let repos = []
         for (let org of db.get(db.keys.orgs)) {

@@ -16,6 +16,11 @@ export default new Router({
       component: require('@/components/Main')
     },
     {
+      path: '/organizations',
+      name: 'organizations',
+      component: require('@/components/Organizations')
+    },
+    {
       path: '*',
       redirect: '/'
     }
