@@ -16,6 +16,16 @@ export default new Router({
       component: require('@/components/Main')
     },
     {
+      path: '/organizations',
+      name: 'organizations',
+      component: require('@/components/Organizations')
+    },
+    {
+      path: '/repositories',
+      name: 'repositories',
+      component: require('@/components/Repositories')
+    },
+    {
       path: '*',
       redirect: '/'
     }
