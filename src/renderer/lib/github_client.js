@@ -44,5 +44,8 @@ export default {
   async pullRequests (org, repo) {
     let pulls = await this.pageFetch(`/repos/${org}/${repo}/pulls`, {sort: 'created', direction: 'desc'})
     return pulls
+  },
+  pullRequest (org, repo, number) {
+    return this.http().get(`/repos/${org}/${repo}/issues/${number}`)
   }
 }

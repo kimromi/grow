@@ -9,8 +9,13 @@
           .media-body
             p.pull-repo {{ pull.org }} / {{ pull.repo }}
             p.pull-title {{ pull.title }}
+            ul.pull-labels
+              li(v-for="label of pull.labels" :style="{ background: '#' + label.color }")
+                | {{ label.name }}
     .pane
-      webview(v-show="showURL != ''" id="wv" :src="showURL")
+      .text-center(v-show="loadingShowURL")
+        h6 loading..
+      webview(v-show="!loadingShowURL && showURL != ''" id="wv" :src="showURL")
 </template>
 
 <script>
@@ -22,6 +27,7 @@
     data () {
       return {
         pulls: {},
+        loadingShowURL: false,
         showURL: ''
       }
     },
@@ -37,8 +43,18 @@
       if (db.get(db.keys.pulls) === undefined || db.get(db.keys.pulls) === null) {
         db.set(db.keys.pulls, await this.fetchPullRequests())
       }
-      // db.set(db.keys.pulls, await this.fetchPullRequests())
       this.pulls = db.get(db.keys.pulls)
+    },
+    mounted () {
+      this.refreshLabels()
+
+      const webview = document.querySelector('webview')
+      webview.addEventListener('did-start-loading', function () {
+        this.loadingShowURL = true
+      }.bind(this))
+      webview.addEventListener('did-stop-loading', function () {
+        this.loadingShowURL = false
+      }.bind(this))
     },
     methods: {
       async fetchPullRequests () {
@@ -57,6 +73,18 @@
         }
         return pulls
       },
+      async refreshLabels () {
+        let pulls = []
+        for (let pull of this.pulls) {
+          await client.pullRequest(pull.org, pull.repo, pull.number)
+            .then(function (response) {
+              pull['labels'] = response.data.labels
+              pulls.push(pull)
+            })
+        }
+        db.set(db.keys.pulls, pulls)
+        this.pulls = pulls
+      },
       open (pull) {
         let webUrl = config.get(config.keys.webUrl)
         this.showURL = `${webUrl}/${pull.org}/${pull.repo}/pull/${pull.number}`
@@ -66,11 +94,34 @@
 </script>
 
 <style lang='scss'>
-  p.pull-repo {
-    font-size: 11px;
-  }
-  p.pull-title {
-    font-size: 13px;
+  .list-group-item {
+    cursor: pointer;
+
+    &:hover {
+      background: #EEE;
+    }
+
+    .media-body {
+      p.pull-repo {
+        font-size: 11px;
+        color: gray;
+        cursor: pointer;
+      }
+      p.pull-title {
+        font-size: 13px;
+        cursor: pointer;
+      }
+      ul.pull-labels {
+        padding: 0;
+
+        li {
+          margin-right: 3px;
+          padding: 0 5px;
+          display: inline-block;
+          border-radius: 3px;
+        }
+      }
+    }
   }
   #wv {
     width: 100%;
