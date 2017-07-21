@@ -59,7 +59,6 @@
       },
       open (pull) {
         let webUrl = config.get(config.keys.webUrl)
-        console.log(`${webUrl}/${pull.org}/${pull.repo}/pull/${pull.number}`)
         this.showURL = `${webUrl}/${pull.org}/${pull.repo}/pull/${pull.number}`
       }
     }
