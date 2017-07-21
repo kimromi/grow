@@ -1,11 +1,14 @@
 <template lang='pug'>
-  div#wrapper
-    h2 choose organizations
-    ul
-      li(v-for="org of organizations")
-        input(type="checkbox" :id="org.name" v-model="org.managed")
-        label(:for="org.name") {{ org.name }}
-    button(@click="back") OK
+  .pane-group
+    .pane-sm.sidebar
+    .pane
+      h1 choose organizations
+      form
+        .checkbox(v-for="org of organizations")
+          label
+            input(type="checkbox" :id="org.name" v-model="org.managed")
+            span {{ org.name }}
+      button.btn.btn-positive.btn-large(@click="ok") OK
 </template>
 
 <script>
@@ -43,7 +46,7 @@
         }
         return orgs
       },
-      back () {
+      ok () {
         this.$router.push('main')
       }
     }
@@ -51,6 +54,10 @@
 </script>
 
 <style lang='scss'>
-  li {
-    list-style-type: none
+  .pane {
+    padding: 15px;
   }
+  .checkbox {
+    margin: 0;
+  }
+</style>
