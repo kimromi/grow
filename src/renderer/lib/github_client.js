@@ -12,12 +12,12 @@ export default {
       headers: {'Authorization': `token ${config.get(config.keys.token)}`}
     })
   },
-  async pageFetch (path) {
+  async pageFetch (path, options = {}) {
     let page = 1
     let returns = []
     while (true) {
       let fetched = []
-      await this.http().get(path, {params: {page: page}})
+      await this.http().get(path, {params: Object.assign({page: page}, options)})
         .then(function (response) {
           if (response.data.length > 0) {
             fetched = response.data
@@ -41,7 +41,8 @@ export default {
     let repos = await this.pageFetch(`/orgs/${org}/repos`)
     return repos
   },
-  pull_requests (repo) {
-    return this.instance(`/repos/${repo}/pulls`).get()
+  async pullRequests (org, repo) {
+    let pulls = await this.pageFetch(`/repos/${org}/${repo}/pulls`, {sort: 'created', direction: 'desc'})
+    return pulls
   }
 }
