@@ -1,11 +1,14 @@
 <template lang='pug'>
-  div#wrapper
-    h2 choose repositories
-    ul
-      li(v-for="repo of repositories")
-        input(type="checkbox" :id="repo.name" v-model="repo.managed")
-        label(:for="repo.name") {{ repo.org }} / {{ repo.name }}
-    button(@click="back") OK
+  .pane-group
+    .pane-sm.sidebar
+    .pane
+      h1 choose repositories
+      form
+        .checkbox(v-for="repo of repositories")
+          label
+            input(type="checkbox" :id="repo.name" v-model="repo.managed")
+            span {{ repo.org }} / {{ repo.name }}
+      button.btn.btn-positive.btn-large(@click="ok") OK
 </template>
 
 <script>
@@ -48,7 +51,7 @@
         }
         return repos
       },
-      back () {
+      ok () {
         this.$router.push('main')
       }
     }
@@ -56,7 +59,10 @@
 </script>
 
 <style lang='scss'>
-  li {
-    list-style-type: none
+  .pane {
+    padding: 15px;
+  }
+  .checkbox {
+    margin: 0;
   }
 </style>

@@ -1,15 +1,19 @@
-<template>
-  <div id="app">
-    <router-view></router-view>
-  </div>
+<template lang='pug'>
+  #app
+    .window
+      .window-content
+        router-view
 </template>
 
 <script>
   export default {
-    name: 'grow'
+    data () {
+      return {
+        name: 'grow'
+      }
+    }
   }
 </script>
 
 <style>
-  /* CSS */
 </style>

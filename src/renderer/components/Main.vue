@@ -1,6 +1,8 @@
 <template lang='pug'>
-  div#wrapper
-    p main
+  .pane-group
+    .pane-sm.sidebar
+    .pane
+      span main!
 </template>
 
 <script>
