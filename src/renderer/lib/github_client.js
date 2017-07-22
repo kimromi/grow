@@ -1,5 +1,6 @@
 import axios from 'axios'
 import config from './config'
+import db from '../lib/github_db'
 
 export default {
   check (url, token) {
@@ -33,6 +34,15 @@ export default {
     }
     return returns
   },
+  async user () {
+    if (db.get(db.keys.user) === undefined || db.get(db.keys.user) === null) {
+      await this.http().get('/user')
+        .then(function (response) {
+          db.set(db.keys.user, response.data)
+        })
+    }
+    return db.get(db.keys.user)
+  },
   async organizations () {
     let orgs = await this.pageFetch('/user/orgs')
     return orgs
@@ -42,7 +52,13 @@ export default {
     return repos
   },
   async pullRequests (org, repo) {
-    let pulls = await this.pageFetch(`/repos/${org}/${repo}/pulls`, {sort: 'created', direction: 'desc'})
+    let user = await this.user()
+    let pulls = []
+    for (let issue of await this.pageFetch(`/repos/${org}/${repo}/issues`, {creator: user.login, sort: 'created', direction: 'desc'})) {
+      if (issue.pull_request !== undefined) {
+        pulls.push(issue)
+      }
+    }
     return pulls
   },
   pullRequest (org, repo, number) {
