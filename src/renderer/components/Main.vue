@@ -106,8 +106,6 @@
 
 <style lang='scss'>
   .list-group-item {
-    cursor: pointer;
-
     &:hover {
       background: #EEE;
     }
@@ -116,11 +114,9 @@
       p.pull-repo {
         font-size: 11px;
         color: gray;
-        cursor: pointer;
       }
       p.pull-title {
         font-size: 13px;
-        cursor: pointer;
       }
       ul.pull-labels {
         padding: 0;
