@@ -4,8 +4,8 @@
     .pane.pane-one-fourth
       ul.list-group
         li.list-group-header
-          input.form-control(type="text" placeholder="Search for title")
-        li.list-group-item(v-for="pull of pulls" @click="open(pull)")
+          input.form-control(type="text" placeholder="Search" @keyup="search" v-model="searchKeyword")
+        li.list-group-item(v-for="pull of pulls" @click="open(pull)" v-show="pull.display")
           .media-body
             p.pull-repo {{ pull.org }} / {{ pull.repo }}
             p.pull-title {{ pull.title }}
@@ -27,6 +27,7 @@
     data () {
       return {
         pulls: {},
+        searchKeyword: '',
         loadingShowURL: false,
         showURL: ''
       }
@@ -67,7 +68,8 @@
               repo: repo.name,
               title: pull.title,
               number: pull.number,
-              created_at: pull.created_at
+              created_at: pull.created_at,
+              display: true
             })
           }
         }
@@ -88,6 +90,15 @@
       open (pull) {
         let webUrl = config.get(config.keys.webUrl)
         this.showURL = `${webUrl}/${pull.org}/${pull.repo}/pull/${pull.number}`
+      },
+      search () {
+        let r = new RegExp(this.searchKeyword, 'g')
+        let pulls = []
+        for (let pull of this.pulls) {
+          pull.display = !!(pull.title.match(r) || pull.org.match(r) || pull.repo.match(r))
+          pulls.push(pull)
+        }
+        this.pull = pulls
       }
     }
   }
