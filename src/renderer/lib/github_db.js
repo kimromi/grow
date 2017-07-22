@@ -3,6 +3,7 @@ const store = new Store()
 
 export default {
   keys: {
+    user: 'user',
     orgs: 'orgs',
     repos: 'repos',
     pulls: 'pulls'

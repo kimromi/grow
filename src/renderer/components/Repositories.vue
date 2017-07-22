@@ -41,7 +41,6 @@
         for (let org of db.get(db.keys.orgs)) {
           if (!org.managed) continue
           for (let repo of await client.repositories(org.name)) {
-            console.log(repo)
             repos.push({
               org: org.name,
               name: repo.name,
