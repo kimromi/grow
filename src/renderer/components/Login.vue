@@ -27,9 +27,9 @@
   export default {
     data () {
       return {
-        apiUrl: config.get(config.keys.apiUrl) || '',
-        webUrl: config.get(config.keys.webUrl) || '',
-        token: config.get(config.keys.token) || '',
+        apiUrl: config.get(config.keys.ghe.apiUrl) || '',
+        webUrl: config.get(config.keys.ghe.webUrl) || '',
+        token: config.get(config.keys.ghe.token) || '',
         errorMessages: [],
         correctMessage: ''
       }
@@ -49,9 +49,9 @@
         client.check(this.apiUrl, this.token)
           .then(function (response) {
             if (response.status === 200) {
-              config.set(config.keys.apiUrl, this.apiUrl)
-              config.set(config.keys.webUrl, this.webUrl)
-              config.set(config.keys.token, this.token)
+              config.set(config.keys.ghe.apiUrl, this.apiUrl)
+              config.set(config.keys.ghe.webUrl, this.webUrl)
+              config.set(config.keys.ghe.token, this.token)
               this.correctMessage = 'correct!'
 
               var self = this

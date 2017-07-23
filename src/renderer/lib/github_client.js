@@ -8,9 +8,9 @@ export default {
   },
   http () {
     return axios.create({
-      baseURL: config.get(config.keys.apiUrl),
+      baseURL: config.get(config.keys.ghe.apiUrl),
       timeout: 1000,
-      headers: {'Authorization': `token ${config.get(config.keys.token)}`}
+      headers: {'Authorization': `token ${config.get(config.keys.ghe.token)}`}
     })
   },
   async pageFetch (path, options = {}) {
