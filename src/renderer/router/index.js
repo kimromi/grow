@@ -11,6 +11,16 @@ export default new Router({
       component: require('@/components/Login')
     },
     {
+      path: '/github',
+      name: 'github',
+      component: require('@/components/Github_Enterprise')
+    },
+    {
+      path: '/github-enterprise',
+      name: 'github enterprise',
+      component: require('@/components/Github_Enterprise')
+    },
+    {
       path: '/main',
       name: 'main',
       component: require('@/components/Main')
