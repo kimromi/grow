@@ -9,7 +9,7 @@ export default {
   http (service) {
     return axios.create({
       baseURL: config.get(config.keys[service].apiUrl),
-      timeout: 1000,
+      timeout: 5000,
       headers: {'Authorization': `token ${config.get(config.keys[service].token)}`}
     })
   },
@@ -47,8 +47,8 @@ export default {
     let orgs = await this.pageFetch(service, `/user/orgs`)
     return orgs
   },
-  async repositories (org) {
-    let repos = await this.pageFetch(`/orgs/${org}/repos`)
+  async repositories (service, org) {
+    let repos = await this.pageFetch(service, `/orgs/${org}/repos`)
     return repos
   },
   async pullRequests (org, repo) {
