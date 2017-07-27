@@ -20,7 +20,10 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    useContentSize: true
+    useContentSize: true,
+    webPreferences: {
+      webSecurity: false
+    }
   })
   mainWindow.maximize()
 

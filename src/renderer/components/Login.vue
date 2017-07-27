@@ -2,18 +2,19 @@
   .pane-group
     .pane-sm.sidebar
     .pane
-      span(@click="oauthGithub") github
-      router-link(to="/github-enterprise") GitHub Enterprise
+      form
+        .form-group
+          router-link(to="/github")
+            button.btn.btn-large.btn-default GitHub
+        .form-group
+          router-link(to="/github-enterprise")
+            button.btn.btn-large.btn-default GitHub Enterprise
 </template>
 
 <script>
   export default {
     data () {
       return {
-      }
-    },
-    methods: {
-      oauthGithub () {
       }
     }
   }

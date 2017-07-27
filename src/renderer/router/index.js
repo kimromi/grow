@@ -13,7 +13,7 @@ export default new Router({
     {
       path: '/github',
       name: 'github',
-      component: require('@/components/Github_Enterprise')
+      component: require('@/components/Github')
     },
     {
       path: '/github-enterprise',

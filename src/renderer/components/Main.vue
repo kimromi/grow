@@ -88,7 +88,7 @@
         this.pulls = pulls
       },
       open (pull) {
-        let webUrl = config.get(config.keys.webUrl)
+        let webUrl = config.get(config.keys.ghe.webUrl)
         this.showURL = `${webUrl}/${pull.org}/${pull.repo}/pull/${pull.number}`
       },
       search () {
