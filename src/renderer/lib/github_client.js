@@ -51,17 +51,17 @@ export default {
     let repos = await this.pageFetch(service, `/orgs/${org}/repos`)
     return repos
   },
-  async pullRequests (org, repo) {
-    let user = await this.user()
+  async pullRequests (service, org, repo) {
+    let user = await this.user(service)
     let pulls = []
-    for (let issue of await this.pageFetch(`/repos/${org}/${repo}/issues`, {creator: user.login, sort: 'created', direction: 'desc'})) {
+    for (let issue of await this.pageFetch(service, `/repos/${org}/${repo}/issues`, {creator: user.login, sort: 'created', direction: 'desc'})) {
       if (issue.pull_request !== undefined) {
         pulls.push(issue)
       }
     }
     return pulls
   },
-  pullRequest (org, repo, number) {
-    return this.http().get(`/repos/${org}/${repo}/issues/${number}`)
+  pullRequest (service, org, repo, number) {
+    return this.http(service).get(`/repos/${org}/${repo}/issues/${number}`)
   }
 }
