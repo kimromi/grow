@@ -116,12 +116,14 @@
       },
       search () {
         let r = new RegExp(this.searchKeyword, 'g')
-        let pulls = []
-        for (let pull of this.pulls) {
-          pull.display = !!(pull.title.match(r) || pull.org.match(r) || pull.repo.match(r))
-          pulls.push(pull)
+        for (let service of ['github', 'ghe']) {
+          let pulls = []
+          for (let pull of this.pulls[service]) {
+            pull.display = !!(pull.title.match(r) || pull.org.match(r) || pull.repo.match(r))
+            pulls.push(pull)
+          }
+          this.pulls[service] = pulls
         }
-        this.pull = pulls
       }
     }
   }
