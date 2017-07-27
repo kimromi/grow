@@ -5,7 +5,18 @@
       ul.list-group
         li.list-group-header
           input.form-control(type="text" placeholder="Search" @keyup="search" v-model="searchKeyword")
-        li.list-group-item(v-for="pull of pulls" @click="open(pull)" v-show="pull.display")
+        li.list-group-header(v-show="pulls.github.length > 0")
+          h4 GitHub
+        li.list-group-item(v-for="pull of pulls.github" @click="open(pull)" v-show="pull.display")
+          .media-body
+            p.pull-repo {{ pull.org }} / {{ pull.repo }}
+            p.pull-title {{ pull.title }}
+            ul.pull-labels
+              li(v-for="label of pull.labels" :style="{ background: '#' + label.color }")
+                | {{ label.name }}
+        li.list-group-header(v-show="pulls.ghe.length > 0")
+          h4 GitHub Enterprise
+        li.list-group-item(v-for="pull of pulls.ghe" @click="open(pull)" v-show="pull.display")
           .media-body
             p.pull-repo {{ pull.org }} / {{ pull.repo }}
             p.pull-title {{ pull.title }}
@@ -26,7 +37,10 @@
   export default {
     data () {
       return {
-        pulls: {},
+        pulls: {
+          github: {},
+          ghe: {}
+        },
         searchKeyword: '',
         loadingShowURL: false,
         showURL: ''
@@ -41,10 +55,14 @@
         this.$router.push('repositories')
       }
 
-      if (db.get(db.keys.pulls) === undefined || db.get(db.keys.pulls) === null) {
-        db.set(db.keys.pulls, await this.fetchPullRequests())
+      for (let service of ['github', 'ghe']) {
+        if (config.get(config.keys[service].token)) {
+          if (db.get(db.keys[service].pulls) === undefined || db.get(db.keys[service].pulls) === null) {
+            db.set(db.keys[service].pulls, await this.fetchPullRequests(service))
+          }
+          this.pulls[service] = db.get(db.keys[service].pulls)
+        }
       }
-      this.pulls = db.get(db.keys.pulls)
     },
     mounted () {
       this.refreshLabels()
@@ -58,12 +76,13 @@
       }.bind(this))
     },
     methods: {
-      async fetchPullRequests () {
+      async fetchPullRequests (service) {
         let pulls = []
-        for (let repo of db.get(db.keys.repos)) {
+        for (let repo of db.get(db.keys[service].repos)) {
           if (!repo.managed) continue
-          for (let pull of await client.pullRequests(repo.org, repo.name)) {
+          for (let pull of await client.pullRequests(service, repo.org, repo.name)) {
             pulls.push({
+              service: service,
               org: repo.org,
               repo: repo.name,
               title: pull.title,
@@ -76,29 +95,35 @@
         return pulls
       },
       async refreshLabels () {
-        let pulls = []
-        for (let pull of this.pulls) {
-          await client.pullRequest(pull.org, pull.repo, pull.number)
-            .then(function (response) {
-              pull['labels'] = response.data.labels
-              pulls.push(pull)
-            })
+        for (let service of ['github', 'ghe']) {
+          let pulls = []
+          if (this.pulls[service].length === 0) continue
+
+          for (let pull of this.pulls[service]) {
+            await client.pullRequest(service, pull.org, pull.repo, pull.number)
+              .then(function (response) {
+                pull['labels'] = response.data.labels
+                pulls.push(pull)
+              })
+          }
+          db.set(db.keys[service].pulls, pulls)
+          this.pulls[service] = pulls
         }
-        db.set(db.keys.pulls, pulls)
-        this.pulls = pulls
       },
       open (pull) {
-        let webUrl = config.get(config.keys.webUrl)
+        let webUrl = config.get(config.keys.ghe.webUrl)
         this.showURL = `${webUrl}/${pull.org}/${pull.repo}/pull/${pull.number}`
       },
       search () {
         let r = new RegExp(this.searchKeyword, 'g')
-        let pulls = []
-        for (let pull of this.pulls) {
-          pull.display = !!(pull.title.match(r) || pull.org.match(r) || pull.repo.match(r))
-          pulls.push(pull)
+        for (let service of ['github', 'ghe']) {
+          let pulls = []
+          for (let pull of this.pulls[service]) {
+            pull.display = !!(pull.title.match(r) || pull.org.match(r) || pull.repo.match(r))
+            pulls.push(pull)
+          }
+          this.pulls[service] = pulls
         }
-        this.pull = pulls
       }
     }
   }

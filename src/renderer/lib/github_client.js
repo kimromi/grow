@@ -6,19 +6,19 @@ export default {
   check (url, token) {
     return axios.get(url, {headers: {'Authorization': `token ${token}`}})
   },
-  http () {
+  http (service) {
     return axios.create({
-      baseURL: config.get(config.keys.apiUrl),
-      timeout: 1000,
-      headers: {'Authorization': `token ${config.get(config.keys.token)}`}
+      baseURL: config.get(config.keys[service].apiUrl),
+      timeout: 5000,
+      headers: {'Authorization': `token ${config.get(config.keys[service].token)}`}
     })
   },
-  async pageFetch (path, options = {}) {
+  async pageFetch (service, path, options = {}) {
     let page = 1
     let returns = []
     while (true) {
       let fetched = []
-      await this.http().get(path, {params: Object.assign({page: page}, options)})
+      await this.http(service).get(path, {params: Object.assign({page: page}, options)})
         .then(function (response) {
           if (response.data.length > 0) {
             fetched = response.data
@@ -34,34 +34,34 @@ export default {
     }
     return returns
   },
-  async user () {
-    if (db.get(db.keys.user) === undefined || db.get(db.keys.user) === null) {
-      await this.http().get('/user')
+  async user (service) {
+    if (db.get(db.keys[service].user) === undefined || db.get(db.keys[service].user) === null) {
+      await this.http(service).get('/user')
         .then(function (response) {
-          db.set(db.keys.user, response.data)
+          db.set(db.keys[service].user, response.data)
         })
     }
-    return db.get(db.keys.user)
+    return db.get(db.keys[service].user)
   },
-  async organizations () {
-    let orgs = await this.pageFetch('/user/orgs')
+  async organizations (service) {
+    let orgs = await this.pageFetch(service, `/user/orgs`)
     return orgs
   },
-  async repositories (org) {
-    let repos = await this.pageFetch(`/orgs/${org}/repos`)
+  async repositories (service, org) {
+    let repos = await this.pageFetch(service, `/orgs/${org}/repos`)
     return repos
   },
-  async pullRequests (org, repo) {
-    let user = await this.user()
+  async pullRequests (service, org, repo) {
+    let user = await this.user(service)
     let pulls = []
-    for (let issue of await this.pageFetch(`/repos/${org}/${repo}/issues`, {creator: user.login, sort: 'created', direction: 'desc'})) {
+    for (let issue of await this.pageFetch(service, `/repos/${org}/${repo}/issues`, {creator: user.login, sort: 'created', direction: 'desc'})) {
       if (issue.pull_request !== undefined) {
         pulls.push(issue)
       }
     }
     return pulls
   },
-  pullRequest (org, repo, number) {
-    return this.http().get(`/repos/${org}/${repo}/issues/${number}`)
+  pullRequest (service, org, repo, number) {
+    return this.http(service).get(`/repos/${org}/${repo}/issues/${number}`)
   }
 }
