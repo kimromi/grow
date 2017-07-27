@@ -21,7 +21,7 @@
         correct: false,
         clientId: '8b444fb52fa8fe80a5e8',
         clientSecret: '3bb9aa47a9d146b329598520366fe1f819559d88',
-        scopes: ['user:email', 'notifications']
+        scopes: ['read:org', 'notifications']
       }
     },
     computed: {
